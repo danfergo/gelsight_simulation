@@ -1,0 +1,24 @@
+fdm_printer:
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 50
+
+  x_axis:
+    pid: {p: 100.0, i: 0.01, d: 10.0}
+  y_axis:
+    pid: {p: 100.0, i: 0.01, d: 10.0}
+  z_axis:
+    pid: {p: 100.0, i: 0.01, d: 10.0}
+
+  xyz_controller:
+    type: position_controllers/JointGroupPositionController
+    joints:
+      - x_axis
+      - y_axis
+      - z_axis
+    x_axis:
+      pid: {p: 100.0, i: 0.01, d: 10.0}
+    y_axis:
+      pid: {p: 100.0, i: 0.01, d: 10.0}
+    z_axis:
+      pid: {p: 100.0, i: 0.01, d: 10.0}

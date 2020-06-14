@@ -1,0 +1,18 @@
+<launch xmlns:xacro="http://www.w3.org/1999/XSL/Transform">
+
+    <arg name="rviz" default="True"/>
+
+    <param name="robot_description"
+           command="$(find xacro)/xacro --inorder '$(find gelsight_description)/urdf/gelsight2014.xacro'"/>
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"/>
+
+    <node if="$(arg rviz)" type="rviz" name="rviz" pkg="rviz"
+          args="-d $(find gelsight_description)/launch/config.rviz"/>
+
+
+
+
+</launch>
+
+

@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+    <xacro:macro name="gelsight2014">
+
+        <material name="black_resin">
+            <color rgba="0.1 0.1 0.1 1"/>
+        </material>
+
+        <material name="gray_elastomer">
+            <color rgba="0.8 0.8 0.8 1"/>
+        </material>
+
+        <material name="transparent_glass">
+            <color rgba="0.9 0.95 1 0.7"/>
+        </material>
+
+
+        <link name="gelsight_base"/>
+
+        <xacro:include filename="$(find gelsight_description)/urdf/gelsight2014_case.xacro"/>
+        <xacro:gelsight2014_case/>
+
+         <link name="gelsight_tape">
+            <visual>
+                <geometry>
+                    <box size="0.0315 0.0315 0.03"/>
+                </geometry>
+                <origin rpy="0 0 0" xyz="0 0 0.023"/>
+            </visual>
+            <inertial>
+                <mass value="0.010"/>
+                <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+            </inertial>
+        </link>
+        <gazebo reference="gelsight_tape">
+            <visual>
+                <material>
+                    <ambient>0 0 0 1</ambient>
+                    <diffuse>0 0 0 1</diffuse>
+                    <specular>1 1 1 0.5</specular>
+                    <emissive>0 0 0 0</emissive>
+                </material>
+            </visual>
+        </gazebo>
+        <joint name="gelsight_base_to_tape" type="fixed">
+             <origin xyz="0 0 -0.006" rpy="0 0 0"/>
+            <parent link="gelsight_base"/>
+             <child link="gelsight_tape"/>
+        </joint>
+
+
+        <link name="gelsight_elastomer">
+            <visual>
+                <geometry>
+                    <box size="0.025 0.022 0.03"/>
+                </geometry>
+                <origin rpy="0 0 0" xyz="0 0 0.023"/>
+                <material name="gray_elastomer"/>
+            </visual>
+            <inertial>
+                <mass value="0.010"/>
+                <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+            </inertial>
+        </link>
+        <joint name="gelsight_base_to_elastomer" type="fixed">
+            <!-- <origin xyz="0 0 -0.006" rpy="0 0 0"/>-->
+            <!-- The Elastomer is 6mm higher than the shell (2mm glass, 4mm elastomer) -->
+            <parent link="gelsight_base"/>
+            <child link="gelsight_elastomer"/>
+        </joint>
+
+        <gazebo reference="gelsight_elastomer">
+            <material>Gazebo/White</material>
+        </gazebo>
+
+        <xacro:include filename="$(find gelsight_description)/urdf/gelsight2014_spectre.xacro"/>
+        <xacro:gelsight_spectre suffix="right" color="1.0 0.2 0.45" r="0" x="-0.0125" y="-0.0125"/>
+        <xacro:gelsight_spectre suffix="bottom" color="0.4 1.0 0.6" r="${pi/2}" x="0.0125" y="-0.0125"/>
+        <xacro:gelsight_spectre suffix="left" color="1.0 1.0 1.0" r="${pi}" x="0.0125" y="0.0125"/>
+        <xacro:gelsight_spectre suffix="top" color="0.2 0.5 1.0" r="${pi + pi/2}" x="-0.0125" y="0.0125"/>
+
+        <xacro:include filename="$(find gelsight_description)/urdf/gelsight_camera.xacro"/>
+        <xacro:gelsight_camera/>
+        <joint name='base_to_camera' type='fixed'>
+            <parent link="gelsight_base"/>
+            <child link="gelsight_camera"/>
+            <origin xyz="0.0 0.0 0.01" rpy="0.0 ${-pi/2} ${-pi/2}"/>
+        </joint>
+
+
+    </xacro:macro>
+</robot>

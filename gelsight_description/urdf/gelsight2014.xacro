@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<robot name="gelsight2014" xmlns:xacro="http://wiki.ros.org/xacro">
+    <xacro:include filename="$(find gelsight_description)/urdf/gelsight2014_macro.xacro"/>
+    <xacro:gelsight2014/>
+</robot>

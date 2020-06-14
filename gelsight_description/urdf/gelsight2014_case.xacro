@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+    <xacro:macro name="gelsight2014_case">
+
+        <link name="gelsight_cover_front">
+            <visual>
+                <geometry>
+                    <mesh filename="package://gelsight_description/meshes/gelsight2014_front.stl"
+                          scale="0.001 0.001 0.001"/>
+                </geometry>
+                <material name="black_resin"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="package://gelsight_description/meshes/gelsight2014_front.stl"
+                          scale="0.001 0.001 0.001"/>
+                </geometry>
+            </collision>
+            <inertial>
+                <mass value="0.050"/>
+                <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+            </inertial>
+        </link>
+        <joint name="gelsight_base_to_front" type="fixed">
+            <parent link="gelsight_base"/>
+            <child link="gelsight_cover_front"/>
+        </joint>
+
+        <link name="gelsight_cover_back">
+            <visual>
+                <geometry>
+                    <mesh filename="package://gelsight_description/meshes/gelsight2014_back.stl"
+                          scale="0.001 0.001 0.001"/>
+                </geometry>
+                <material name="black_resin"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="package://gelsight_description/meshes/gelsight2014_back.stl"
+                          scale="0.001 0.001 0.001"/>
+                </geometry>
+            </collision>
+            <inertial>
+                <mass value="0.010"/>
+                <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+            </inertial>
+        </link>
+        <joint name="gelsight_base_to_back" type="fixed">
+            <parent link="gelsight_base"/>
+            <child link="gelsight_cover_back"/>
+        </joint>
+
+        <gazebo reference="gelsight_cover_front">
+            <material>Gazebo/DarkGrey</material>
+        </gazebo>
+
+        <gazebo reference="gelsight_cover_back">
+            <material>Gazebo/DarkGrey</material>
+        </gazebo>
+    </xacro:macro>
+</robot>

@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+
+    <!-- Defines a "standard" link macro-->
+    <xacro:macro name="m_link_visual" params="name mass color collide:=true xyz:='0 0 0' rpy:='0 0 0' *geometry *visual">
+        <link name="fdm_printer_${name}">
+            <visual>
+                <origin xyz="${xyz}" rpy="${rpy}"/>
+                <geometry>
+                    <xacro:insert_block name="geometry"/>
+                </geometry>
+                <material name="link_{$name}_material">
+                    <color rgba="${color}"/>
+                </material>
+            </visual>
+            <xacro:if value="${collide}">
+                <collision>
+                    <origin xyz="${xyz}" rpy="${rpy}"/>
+                    <geometry>
+                        <xacro:insert_block name="geometry"/>
+                    </geometry>
+                </collision>
+            </xacro:if>
+            <inertial>
+                <mass value="${mass}"/>
+                <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+            </inertial>
+        </link>
+        <gazebo reference="fdm_printer_${name}">
+            <xacro:insert_block name="visual"/>
+        </gazebo>
+    </xacro:macro>
+
+    <xacro:macro name="m_link" params="name mass color collide:=true xyz:='0 0 0' rpy:='0 0 0' *geometry">
+        <xacro:m_link_visual name="${name}"
+                             collide="${collide}"
+                             mass="${mass}"
+                             color="${color}"
+                             xyz="${xyz}">
+            <xacro:insert_block name="geometry"/>
+            <visual>
+                <material>
+                    <ambient>${color}</ambient>
+                    <diffuse>${color}</diffuse>
+                    <specular>0.1 0.1 0.1 1</specular>
+                    <emissive>0 0 0 0</emissive>
+                </material>
+            </visual>
+        </xacro:m_link_visual>
+    </xacro:macro>
+
+    <!-- Defines a "standard" joint-->
+    <xacro:macro name="m_joint"
+                 params="name:=${None} parent child xyz:='0 0 0' rpy:='0 0 0' type:='fixed'
+                 lower_limit:=${None} upper_limit:=${None} effort:=${None} velocity:=${None}
+                 axis:=${None}">
+        <joint name="${name if name is not None else ('fdm_printer__' + parent + '__' + child)}"
+               type="${type}">
+            <parent link="fdm_printer_${parent}"/>
+            <child link="fdm_printer_${child}"/>
+            <origin xyz="${xyz}" rpy="${rpy}"/>
+            <xacro:if value="${lower_limit or upper_limit or velocity or effort}">
+                <limit lower="${lower_limit if lower_limit is not None else 0}"
+                       upper="${upper_limit if upper_limit is not None else 3}"
+                       effort="${effort if effort is not None else 100}"
+                       velocity="${velocity if velocity is not None else 0.05}"/>
+            </xacro:if>
+            <xacro:if value="${axis is not None}">
+                <axis xyz="${axis}"/>
+            </xacro:if>
+        </joint>
+
+    </xacro:macro>
+
+    <xacro:macro name="joint_transmission"
+                 params="name parent child xyz:='0 0 0' rpy:='0 0 0' type:='prismatic'
+                 lower_limit:=${None} upper_limit:=${None} effort:=${None} velocity:=${None}
+                 axis:=${None}">
+        <xacro:m_joint
+                name="${name}"
+                parent="${parent}"
+                child="${child}"
+                type="${type}"
+                xyz="${xyz}"
+                rpy="${rpy}"
+                lower_limit="${lower_limit}"
+                upper_limit="${upper_limit}"
+                axis="${axis}"/>
+
+        <transmission name="fdm_printer__transm__${parent}__${child}">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="${name}">
+                <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="fdm_printer__actuator__${parent}__${child}">
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+
+    </xacro:macro>
+
+    <xacro:macro name="ros_control_gazebo_plugin">
+        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+            <robotNamespace>/fdm_printer</robotNamespace>
+            <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+        </plugin>
+    </xacro:macro>
+
+</robot>

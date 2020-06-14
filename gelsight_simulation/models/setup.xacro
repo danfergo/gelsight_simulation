@@ -1,0 +1,23 @@
+<robot name="fdm_printer" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:include filename="$(find fdm_printer_description)/models/fdm_printer.xacro"/>
+    <xacro:include filename="$(find gelsight_description)/urdf/gelsight2014.xacro"/>
+    <xacro:include filename="$(find gelsight_simulation)/models/solid.xacro"/>
+
+    <xacro:arg name="solid_name" default="torus"/>
+
+
+    <xacro:solid name="$(arg solid_name)"/>
+
+    <joint name="hook_gelsight_printer" type="fixed">
+        <origin xyz="0 0.007 0.027" rpy="0 0 ${pi/2}"/>
+        <parent link="fdm_printer_tcp"/>
+        <child link="gelsight_base"/>
+    </joint>
+
+    <joint name="hook_solid" type="fixed">
+        <!--        <origin xyz="-0.045 0 0" rpy="0 0 ${pi/2}"/>-->
+        <parent link="fdm_printer_bed"/>
+        <child link="solid_link"/>
+    </joint>
+
+</robot>

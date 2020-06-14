@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="update" default="false"/>
+    <arg name="sim" default="false"/>
+
+    <arg name="solid" default="dots"/>
+
+
+    <include if="$(eval not arg('update') and arg('sim'))"
+             file="$(find gazebo_ros)/launch/empty_world.launch"/>
+
+    <param name="robot_description"
+           command="$(find xacro)/xacro --inorder '$(find gelsight_simulation)/models/setup.xacro'
+           solid_name:=$(arg solid)"/>
+
+    <include file="$(find fdm_printer_bringup)/launch/bringup.launch">
+        <arg name="update" value="$(arg update)"/>
+        <arg name="sim" value="$(arg sim)"/>
+        <arg name="robot_description" value="robot_description"/>
+    </include>
+
+    <!--    <node name="dc"-->
+    <!--          pkg="gelsight_simulation"-->
+    <!--          type="data_collection.py"-->
+    <!--          output="screen"/>-->
+
+    <!-- IN SIMULATION -->
+
+    <group if="$(arg sim)">
+        <node unless="$(arg update)"
+              name="gelsight_sim"
+              pkg="gelsight_gazebo"
+              type="gelsight_driver.py"/>
+    </group>
+
+
+    <!-- IN REAL WORLD -->
+    <group unless="$(arg sim)">
+        <node unless="$(arg update)"
+              name="gelsight_driver"
+              pkg="gelsight_simulation"
+              type="gelsight_driver.py"/>
+    </group>
+
+</launch>

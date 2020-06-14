@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+
+    <xacro:macro name="gelsight_spectre" params="suffix r x y color">
+        <link name="gelsight_spectre_${suffix}">
+            <visual>
+                <origin rpy="${pi/2} 0 ${r}" xyz="${x} ${y} 0.027"/>
+                <geometry>
+                    <mesh filename="package://gelsight_description/meshes/glass.stl"
+                          scale="0.001 0.001 0.001"/>
+                </geometry>
+                <material name="transparent_spectre"/>
+            </visual>
+        </link>
+        <gazebo reference="gelsight_spectre_${suffix}">
+            <visual>
+                <material>
+                    <ambient>${color} 0.9</ambient>
+                    <diffuse>${color} 0.9</diffuse>
+                    <specular>0.1 0.1 0.1 0</specular>
+                    <emissive>${color} 0.01</emissive>
+                </material>
+            </visual>
+<!--            <material>Gazebo/White</material>-->
+        </gazebo>
+        <joint name="gelsight_base_to_spectre_${suffix}" type="fixed">
+            <parent link="gelsight_base"/>
+            <child link="gelsight_spectre_${suffix}"/>
+        </joint>
+    </xacro:macro>
+
+</robot>

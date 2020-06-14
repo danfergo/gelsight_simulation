@@ -1,0 +1,7 @@
+fdm_printer:
+  hardware_interface:
+     loop_hz: 10 # hz
+  joints:
+   - x_axis
+   - y_axis
+   - z_axis

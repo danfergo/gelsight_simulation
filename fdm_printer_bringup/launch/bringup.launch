@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="sim" default="false"/>
+    <arg name="update" default="false"/>
+
+    <arg name="port" default="/dev/ttyUSB0"/>
+    <arg name="baud_rate" default="115200"/>
+
+    <arg name="robot_description" default="false"/>
+    <arg name="robot_name" default="fdm_printer"/>
+
+    <arg name="robot_description_name"
+         value="$(eval 'robot_description' if arg('robot_description') is false else arg('robot_description'))"/>
+
+    <param if="$(eval arg('robot_description') is false)"
+           name="$(arg robot_description_name)"
+           command="$(find xacro)/xacro --inorder '$(find fdm_printer_description)/models/fdm_printer.xacro' sim:=$(arg sim)"/>
+
+    <rosparam file="$(find fdm_printer_description)/models/fdm_printer_control.yaml" command="load"/>
+    <!--    <rosparam file="$(find fdm_printer_description)/models/hardware.yaml" command="load"/>-->
+
+
+    <!-- BOTH WORLDS -->
+    <node unless="$(arg update)"
+          ns="/$(arg robot_name)"
+          name="controller_spawner"
+          pkg="controller_manager"
+          type="spawner"
+          respawn="false"
+          output="screen"
+          args="xyz_controller joint_state_controller"/>
+
+    <!-- IN SIMULATION -->
+    <group if="$(arg sim)">
+        <node if="$(arg update)"
+              name="rm_printer"
+              pkg="rosservice"
+              type="rosservice"
+              args="call --wait gazebo/delete_model '{model_name: $(arg robot_name)}'"/>
+
+        <node name="spawn_printer"
+              pkg="gazebo_ros"
+              type="spawn_model"
+              args="-param $(arg robot_description_name) -urdf -model $(arg robot_name)"/>
+
+    </group>
+
+
+    <!-- IN REAL WORLD -->
+    <group unless="$(arg sim)">
+        <node unless="$(arg update)"
+              ns="/fdm_printer"
+              name="fdm_printer_hardware_interface"
+              pkg="fdm_printer"
+              type="fdm_printer_hardware_interface"
+              output="screen"/>
+
+    </group>
+
+</launch>

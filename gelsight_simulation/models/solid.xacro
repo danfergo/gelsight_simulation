@@ -1,0 +1,36 @@
+<robot name="solid" xmlns:xacro="http://www.ros.org/wiki/xacro">>
+    <xacro:macro name="solid" params="name">
+
+        <material name="black_resin_material">
+            <color rgba="0.1 0.1 0.1 1"/>
+        </material>
+
+
+        <link name="solid_link">
+            <visual>
+                <origin rpy="0 0 0" xyz="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://gelsight_simulation/solids/stl/${name}.stl"
+                          scale="0.001 0.001 0.001"/>
+                </geometry>
+                <material name="black_resin_material"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="package://gelsight_simulation/solids/stl/cone.stl"
+                          scale="0.001 0.001 0.001"/>
+                </geometry>
+            </collision>
+            <inertial>
+                <mass value="0.050"/>
+                <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+            </inertial>
+
+        </link>
+
+        <gazebo reference="solid_link">
+            <material>Gazebo/DarkGrey</material>
+        </gazebo>
+
+    </xacro:macro>
+</robot>

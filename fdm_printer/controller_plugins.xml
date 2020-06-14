@@ -1,0 +1,5 @@
+<library path="lib/libposition_controller_lib">
+    <class name="fdm_printer/PositionController"
+           type="fdm_printer_ns::PositionController"
+           base_class_type="controller_interface::ControllerBase"/>
+</library>
