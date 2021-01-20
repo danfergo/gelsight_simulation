@@ -1,6 +1,6 @@
 # GelSight Simulation
 
-This repository contains the necessary ROS packages for executing the GelSight Simulation approach proposed in **(publication reference to be inserted here)**. These packages contain the drivers for running a GelSight sensor (in real world and simulation) and a FDM-Printer for carrying the described experiments (also in real world and simulation). Visit [danfergo.github.io/gelsight-simulation](https://danfergo.github.io/gelsight-simulation/) for more information.
+This repository contains the necessary code for executing the Simulated Environment and experiments as in our [GelSight Simulation paper](https://arxiv.org/abs/2101.07169). These packages contain the drivers for running a GelSight sensor (in real world and simulation) and a FDM-Printer for carrying the described experiments (also in real world and simulation). The experiments includes the final experiments for the dataset alignment and the *Sim2Real* classification task, and should be executed using Python 3 (outside ROS). Visit [danfergo.github.io/gelsight-simulation](https://danfergo.github.io/gelsight-simulation/) for more information about the work and links for downloading the datasets,
 
 ### Index of Packages
 
@@ -20,3 +20,12 @@ roscore
 roslaunch gelsight_simulation dc.launch sim:=true
 rosrun gelsight_simulation data_collection.py
 ```
+
+To run the experiments scripts, e.g.,
+```
+    python -m experiments.sim2real.train_nn
+```
+
+
+----
+A big thanks to [keras-visuals](https://github.com/chasingbob/keras-visuals), for providing some helpful [Keras](https://keras.io/) callbacks for assessing our NN optimization. 
