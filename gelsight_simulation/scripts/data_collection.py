@@ -7,6 +7,10 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 import cv2
 import math
+import numpy as np
+# import rospack
+# PKG_PATH = rospack.get_path('gelsight_gazebo')
+
 
 bridge = CvBridge()
 pub = None
@@ -19,9 +23,15 @@ WS_MAX = (0.32, 0.32, 0.42)
 # WS_MIN = (0, 0, 0.06)
 WS_MIN = (0, 0, 0.01)
 gelsight_img = None
+gelsight_depth = None
 
 
-# global gelsight_img
+def show_normalized_img(name, img):
+    draw = img.copy()
+    draw -= np.min(draw)
+    draw = draw / np.max(draw)
+    cv2.imshow(name, draw)
+    return draw
 
 
 def euclidean_dist(t1, t2):
@@ -33,7 +43,17 @@ def gelsight_callback(img_msg):
 
     camera_img = bridge.imgmsg_to_cv2(img_msg, desired_encoding="bgr8")
     gelsight_img = camera_img
-    cv2.imshow('fraame', camera_img)
+    cv2.imshow('tactile_img', camera_img)
+    cv2.waitKey(1)
+
+
+def depth_callback(depth_msg):
+    global gelsight_depth
+
+    img = bridge.imgmsg_to_cv2(depth_msg, desired_encoding="32FC1")
+    img[np.isnan(img)] = np.inf
+    gelsight_depth = img
+    show_normalized_img('depth_map', gelsight_depth)
     cv2.waitKey(1)
 
 
@@ -102,23 +122,24 @@ def collect_data():
     # move(*starting_position)
 
     k = 0
-    BASE = '/home/danfergo/Projects/gelsight_simulation/dataset/sim/exp0'
+    BASE = '/home/danfergo/Projects/PhD/gelsight_simulation/dataset/sim/exp3'
+    BASE_DEPTH = '/home/danfergo/Projects/PhD/gelsight_simulation/dataset/sim/depth3'
     # BASE = '/home/danfergo/Projects/gelsight_simulation/dataset/demo/sim_test'
     solid = 'wave1'
-    solid = 'dots'
-    solid = 'cross_lines'
-    solid = 'flat_slab'
-    solid = 'curved_surface'
-    solid = 'parallel_lines'
-    solid = 'pacman'
-    solid = 'torus'
-    solid = 'cylinder_shell'
-    solid = 'sphere2'
-    solid = 'line'
-    solid = 'cylinder_side'
-    solid = 'moon'
-    solid = 'random'
-    solid = 'prism'
+    # solid = 'dots'
+    # solid = 'cross_lines'
+    # solid = 'flat_slab'
+    # solid = 'curved_surface'
+    # solid = 'parallel_lines'
+    # solid = 'pacman'
+    # solid = 'torus'
+    # solid = 'cylinder_shell'
+    # solid = 'sphere2'
+    # solid = 'line'
+    # solid = 'cylinder_side'
+    # solid = 'moon'
+    # solid = 'random'
+    # solid = 'prism'
     # solid = 'dot_in'
     # solid = 'triangle'
     # solid = 'sphere'
@@ -143,6 +164,15 @@ def collect_data():
                     cv2.imwrite(
                         BASE + '/' + solid + '__' + str(k) + '__' + str(x) + '_' + str(y) + '_' + str(z) + '.png',
                         gelsight_img)
+                    print('...>', np.max(gelsight_depth), np.min(gelsight_depth), gelsight_depth.dtype,
+                          np.shape(gelsight_depth), np.shape(gelsight_depth))
+                    # cv2.imwrite(
+                    #     BASE_DEPTH + '/' + solid + '__' + str(k) + '__' + str(x) + '_' + str(y) + '_' + str(z) + '.bmp',
+                    #     gelsight_depth)
+                    np.save(BASE_DEPTH + '/' + solid + '__' + str(k) + '__' + str(x) + '_' + str(y) + '_' + str(z) + '.npy', gelsight_depth)
+
+
+
                 else:
                     print('warn. tactile img not received')
 
@@ -160,6 +190,7 @@ if __name__ == '__main__':
 
     pub = rospy.Publisher('/fdm_printer/xyz_controller/command', Float64MultiArray, queue_size=10)
     rospy.Subscriber("/gelsight/tactile_image", Image, gelsight_callback)
+    rospy.Subscriber("/gelsight/depth/image_raw", Image, depth_callback)
 
     rate = rospy.Rate(1)
     # rate.sleep()

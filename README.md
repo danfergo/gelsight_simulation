@@ -6,12 +6,13 @@ This repository contains the necessary ROS packages for executing the GelSight S
 
 | Package       | Description   |
 | ------------- | ------------------|
+| experiments   | Python3 (outside ROS) scripts with the experiments described in the paper. 
 | fdm_printer   | Contains two drivers for running the FDM printer in the real world: a standard ROS subscriber/publisher and a ROS Control Harware Interface. The drivers work by issuing g-code commands to the printer. | 
 | fdm_printer_bringup     | Includes the file for launching the printer either in simulation or the real world (sim:=true for simulation)   | 
 | fdm_printer_description | The URDF files and STL meshes describing the printer. |
 | gelsight_description | The URDF files and STL meshes describing the GelSight sensor. The modeling is based on sensor proposed [here](https://ieeexplore.ieee.org/document/6943123). |
 | **gelsight_gazebo** | This package contains the [driver](gelsight_gazebo/src/gelsight_driver.py) that implements the proposed approach, to be used in simulation. |
-| gelsight_simulation | Scripts and Materials used to carry the experiments described in the paper. 
+| gelsight_simulation | Scripts and Materials used to carry the data collection process. 
 
 To run the collection of tactile images using the simulated setup.
 ```

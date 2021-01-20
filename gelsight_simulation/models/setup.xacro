@@ -4,6 +4,7 @@
     <xacro:include filename="$(find gelsight_simulation)/models/solid.xacro"/>
 
     <xacro:arg name="solid_name" default="torus"/>
+    <xacro:arg name="rotation_rad" default="0"/>
 
 
     <xacro:solid name="$(arg solid_name)"/>
@@ -15,7 +16,7 @@
     </joint>
 
     <joint name="hook_solid" type="fixed">
-        <!--        <origin xyz="-0.045 0 0" rpy="0 0 ${pi/2}"/>-->
+        <origin xyz="0 0 0" rpy="0 0 $(arg rotation_rad)"/>
         <parent link="fdm_printer_bed"/>
         <child link="solid_link"/>
     </joint>
